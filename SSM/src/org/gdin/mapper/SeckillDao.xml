@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.gdin.mapper.SeckillDao">
+	<update id="reduceNumber">
+		update
+			seckill
+		set
+			number=number-1
+		where seckill_id=#{seckillId}
+		and start_time<![CDATA[<=]]> #{killTime}
+		and end_time>=#{killTime}
+		and number>0;
+	</update>
+	<select id="queryById" resultType="Seckill">
+		select seckill_id,name,number,start_time,end_time,create_time
+		from seckill
+		where seckill_id=#{seckillId}
+	</select>
+	<select id="queryAll" resultType="Seckill">
+		select seckill_id,name,number,start_time,end_time,create_time
+		from seckill
+		order by create_time desc
+		limit #{offset},#{limit}
+	</select>
+	
+	<select id="test1" resultType="Seckill" parameterType="Seckill">
+		select seckill_id,name,number,start_time,end_time,create_time
+		from seckill
+		where seckill_id=#{seckillId}
+	</select>
+	
+	<resultMap type="Seckill" id="map">
+		<id property="seckillId" column="seckill_id"/>
+		<result property="name" column="name"/>
+		<result property="number" column="number"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="createTime" column="create_time"/>
+		<collection property="successKilled" ofType="SuccessKilled">
+			<id property="seckillId" column="a"/>
+			<id property="userPhone" column="user_phone"/>
+			<result property="createTime" column="b"/>
+			<result property="state" column="state"/>
+		</collection>
+	</resultMap>
+	
+	<select id="test2" resultMap="map">
+		SELECT seckill.*,success_killed.seckill_id a,success_killed.user_phone,success_killed.state,
+		success_killed.create_time b from seckill,success_killed where 
+		seckill.seckill_id=#{seckillId} and seckill.seckill_id=success_killed.seckill_id
+	</select>
+</mapper>
+

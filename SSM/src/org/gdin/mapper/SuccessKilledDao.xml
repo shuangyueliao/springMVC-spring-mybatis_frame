@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.gdin.mapper.SuccessKilledDao">
+	<insert id="insertSuccessKilled">
+		insert ignore into success_killed(seckill_id,user_phone,state)
+		values(#{seckillId},#{userPhone},0)
+	</insert>
+	<select id="queryByIdWithSeckill" resultType="SuccessKilled">
+		select
+			sk.seckill_id,
+			sk.user_phone,
+			sk.create_time,
+			sk.state,
+			s.seckill_id "seckill.seckill_id",
+			s.name "seckill.name",
+			s.number "seckill.number",
+			s.start_time "seckill.start_time",
+			s.end_time "seckill.end_time",
+			s.create_time "seckill.create_time"
+		from success_killed sk
+		inner join seckill s on sk.seckill_id = s.seckill_id
+		where sk.seckill_id=#{seckillId} and sk.user_phone=#{userPhone}
+	</select>
+	
+	<resultMap type="SuccessKilled" id="map">
+		<id property="seckillId" column="seckill_id"/>
+		<id property="userPhone" column="user_phone"/>
+		<result property="createTime" column="create_time"/>
+		<result property="state" column="state"/>
+		<association property="seckill" javaType="Seckill">
+			<id property="seckillId" column="a"/>
+			<result property="name" column="name"/>
+			<result property="number" column="number"/>
+			<result property="startTime" column="start_time"/>
+			<result property="endTime" column="end_time"/>
+			<result property="createTime" column="b"/>
+		</association>
+	</resultMap>
+	
+	<select id="test1" resultMap="map">
+		select
+			sk.seckill_id,
+			sk.user_phone,
+			sk.create_time,
+			sk.state,
+			s.seckill_id a,
+			s.name,
+			s.number,
+			s.start_time,
+			s.end_time,
+			s.create_time b
+		from success_killed sk
+		inner join seckill s on sk.seckill_id = s.seckill_id
+		where sk.seckill_id=#{seckillId} and sk.user_phone=#{userPhone}
+	</select>
+</mapper>
